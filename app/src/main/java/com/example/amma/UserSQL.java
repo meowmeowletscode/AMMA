@@ -80,7 +80,7 @@ public class UserSQL {
         }
     }
 
-    public void insertUserLoginHistory(String userName) {
+    public void insertUserLoginHistory(String userName, String deviceId) {
         try {
             // Step 1: Retrieve UserID and UserName from User table
             String selectQuery = "SELECT UserID, UserName FROM [User] WHERE UserName = ?";
@@ -92,12 +92,13 @@ public class UserSQL {
                 int userId = rs.getInt("UserID");
                 String user = rs.getString("UserName");
 
-                // Step 2: Insert into UserLoginHistory table
-                String insertQuery = "INSERT INTO UserLoginHistory (UserID, UserName, Login_Time) VALUES (?, ?, ?)";
+                // Step 2: Insert into UserLoginHistory table with Device ID
+                String insertQuery = "INSERT INTO UserLoginHistory (UserID, UserName, Login_Time, DeviceID) VALUES (?, ?, ?, ?)";
                 PreparedStatement insertStmt = connection.prepareStatement(insertQuery);
                 insertStmt.setInt(1, userId);
                 insertStmt.setString(2, user);
                 insertStmt.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
+                insertStmt.setString(4, deviceId);
 
                 insertStmt.executeUpdate();
                 insertStmt.close();
@@ -109,4 +110,5 @@ public class UserSQL {
             e.printStackTrace();
         }
     }
+
 }

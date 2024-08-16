@@ -2,6 +2,7 @@ package com.example.amma;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -67,8 +68,14 @@ public class LoginActivity extends AppCompatActivity {
                 String role = userSQL.getUserRole(userName);
                 User currentUser = new User(userName, password, role);
                 UserManager.getInstance().setCurrentUser(currentUser);
+
+                // Get the device ID
+                String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+
+                // Update Last Login and insert UserLoginHistory with Device ID
                 userSQL.updateLastLogin(userName);
-                userSQL.insertUserLoginHistory(userName);
+                userSQL.insertUserLoginHistory(userName, deviceId);
+
                 Toast.makeText(LoginActivity.this, "Login Successful.", Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(i);
