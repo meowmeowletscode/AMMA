@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "76685198571",
+    "project_id": "amma-250fa",
+    "storage_bucket": "amma-250fa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:76685198571:android:d5c06dfd16c6caf0fceaae",
+        "android_client_info": {
+          "package_name": "com.example.amma"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcmlzb7iaDT8OyH9gvp9LXnQjL9o1-yyc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
