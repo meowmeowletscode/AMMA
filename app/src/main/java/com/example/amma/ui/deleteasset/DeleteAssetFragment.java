@@ -1,4 +1,4 @@
-package com.example.amma.ui.addasset;
+package com.example.amma.ui.deleteasset;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,19 +11,21 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.amma.databinding.FragmentAddassetBinding;
+import com.example.amma.databinding.FragmentDeleteassetBinding;
+import com.example.amma.ui.addasset.AddAssetViewModel;
 
-public class AddAssetFragment extends Fragment {
+public class DeleteAssetFragment extends Fragment {
 
-    private FragmentAddassetBinding binding;
+    private FragmentDeleteassetBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        AddAssetViewModel addAssetViewModel = new ViewModelProvider(this).get(AddAssetViewModel.class);
+        DeleteAssetViewModel deleteAssetViewModel = new ViewModelProvider(this).get(DeleteAssetViewModel.class);
 
-        binding = FragmentAddassetBinding.inflate(inflater, container, false);
+        binding = FragmentDeleteassetBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textGallery;
-        addAssetViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        final TextView textView = binding.textSlideshow;
+        deleteAssetViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 

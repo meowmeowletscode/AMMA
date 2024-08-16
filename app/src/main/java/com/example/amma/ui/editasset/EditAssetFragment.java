@@ -16,10 +16,8 @@ public class EditAssetFragment extends Fragment {
 
     private FragmentEditassetBinding binding;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        EditAssetViewModel editAssetViewModel =
-                new ViewModelProvider(this).get(EditAssetViewModel.class);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        EditAssetViewModel editAssetViewModel = new ViewModelProvider(this).get(EditAssetViewModel.class);
 
         binding = FragmentEditassetBinding.inflate(inflater, container, false);
         View root = binding.getRoot();

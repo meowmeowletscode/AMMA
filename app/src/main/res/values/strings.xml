@@ -11,7 +11,6 @@
     <string name="menu_addAsset">Add New Asset</string>
     <string name="menu_editAsset">Edit Asset Record</string>
     <string name="menu_deleteAsset">Delete Asset Record</string>
-    <string name="title_activity_deleteasset">deleteasset</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
 </resources>

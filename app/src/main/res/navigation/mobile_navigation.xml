@@ -23,5 +23,11 @@
         android:label="@string/menu_editAsset"
         tools:layout="@layout/fragment_editasset" />
 
+    <fragment
+        android:id="@+id/nav_deleteAsset"
+        android:name="com.example.amma.ui.deleteasset.DeleteAssetFragment"
+        android:label="@string/menu_deleteAsset"
+        tools:layout="@layout/fragment_deleteasset" />
+
 
 </navigation>
