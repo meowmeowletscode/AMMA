@@ -10,7 +10,7 @@ public class AddAssetViewModel extends ViewModel {
 
     public AddAssetViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is addasset fragment");
+        mText.setValue("Create Asset Record");
     }
 
     public LiveData<String> getText() {
