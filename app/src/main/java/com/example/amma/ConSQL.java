@@ -11,7 +11,7 @@ public class ConSQL {
     Connection conn;
     @SuppressLint("NewApi")
     public Connection SQLConnection() {
-        String ip = "172.16.140.56", port = "1433", db = "AMMA", username = "sa", password = "sa";
+        String ip = "192.168.43.123", port = "1433", db = "AMMA", username = "sa", password = "sa";
         StrictMode.ThreadPolicy a = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(a);
         String connectURL = null;

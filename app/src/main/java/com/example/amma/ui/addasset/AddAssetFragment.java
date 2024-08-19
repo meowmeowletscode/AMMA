@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
@@ -23,7 +24,9 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.amma.AssetSQL;
 import com.example.amma.LoginActivity;
+import com.example.amma.UserSQL;
 import com.example.amma.databinding.FragmentAddassetBinding;
 
 import java.util.List;
@@ -78,6 +81,7 @@ public class AddAssetFragment extends Fragment {
         loadLabels();
 
         btnClear.setOnClickListener(new BtnClearClickListener());
+        btnSave.setOnClickListener(new BtnSaveClickListener());
 
         return root;
     }
@@ -97,6 +101,36 @@ public class AddAssetFragment extends Fragment {
             txtQuantity.setText("");
             txtDescription.setText("");
             photoView.setImageDrawable(null);
+        }
+    }
+
+    private class BtnSaveClickListener implements View.OnClickListener{
+
+        @Override
+        public void onClick(View view) {
+            AssetSQL assetSQL = new AssetSQL();
+
+            String assetName = txtAssetName.getText().toString().trim();
+            String barcode = txtBarcode.getText().toString().trim();
+            int quantity = Integer.parseInt(txtQuantity.getText().toString().trim());
+            String description = txtDescription.getText().toString().trim();
+            String label = spinnerLabels.getSelectedItem().toString();
+
+            Bitmap photo = null;
+            if (photoView.getDrawable() != null) {
+                photo = ((BitmapDrawable) photoView.getDrawable()).getBitmap();
+            }
+
+            // Call the method to save the asset
+            assetSQL.saveAsset(assetName, barcode, quantity, description.isEmpty() ? null : description, label, photo);
+
+            // Clear the fields after saving
+            txtAssetName.setText("");
+            txtBarcode.setText("");
+            txtQuantity.setText("");
+            txtDescription.setText("");
+            spinnerLabels.setSelection(0); // or set to default item if needed
+            photoView.setImageDrawable(null); // Clear the image
         }
     }
 
