@@ -23,6 +23,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.amma.LoginActivity;
 import com.example.amma.databinding.FragmentAddassetBinding;
 
 import java.util.List;
@@ -42,6 +43,7 @@ public class AddAssetFragment extends Fragment {
     private Spinner spinnerLabels;
     private ImageView photoView;
     private ImageButton btnCapturePhoto;
+    private Button btnClear;
     private Button btnSave;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -61,6 +63,7 @@ public class AddAssetFragment extends Fragment {
         spinnerLabels = binding.spinnerLabels;
         photoView = binding.photoView;
         btnCapturePhoto = binding.btnCapturePhoto;
+        btnClear = binding.btnClear;
         btnSave = binding.btnSave;
 
         btnCapturePhoto.setOnClickListener(v -> {
@@ -74,6 +77,8 @@ public class AddAssetFragment extends Fragment {
 
         loadLabels();
 
+        btnClear.setOnClickListener(new BtnClearClickListener());
+
         return root;
     }
 
@@ -82,6 +87,17 @@ public class AddAssetFragment extends Fragment {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, labels);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerLabels.setAdapter(adapter);
+    }
+
+    private class BtnClearClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            txtAssetName.setText("");
+            txtBarcode.setText("");
+            txtQuantity.setText("");
+            txtDescription.setText("");
+            photoView.setImageDrawable(null);
+        }
     }
 
     private void dispatchTakePictureIntent() {
