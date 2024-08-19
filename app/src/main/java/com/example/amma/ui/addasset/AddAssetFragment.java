@@ -9,8 +9,12 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,28 +23,47 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.amma.R;
 import com.example.amma.databinding.FragmentAddassetBinding;
+
+import java.util.List;
 
 public class AddAssetFragment extends Fragment {
 
+    private AddAssetViewModel addAssetViewModel;
     private FragmentAddassetBinding binding;
+
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_CAMERA_PERMISSION = 2;
+
+    private EditText txtAssetName;
+    private EditText txtBarcode;
+    private EditText txtQuantity;
+    private EditText txtDescription;
+    private Spinner spinnerLabels;
     private ImageView photoView;
+    private ImageButton btnCapturePhoto;
+    private Button btnSave;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        AddAssetViewModel addAssetViewModel = new ViewModelProvider(this).get(AddAssetViewModel.class);
+        addAssetViewModel = new ViewModelProvider(this).get(AddAssetViewModel.class);
 
         binding = FragmentAddassetBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textGallery;
+        final TextView textView = binding.txtTitle;
         addAssetViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
-        photoView = binding.photoView;
 
-        ImageButton buttonCapture = binding.btnCapturePhoto;
-        buttonCapture.setOnClickListener(v -> {
+        //binding the id
+        txtAssetName = binding.txtAssetName;
+        txtBarcode = binding.txtBarcode;
+        txtQuantity = binding.txtQuantity;
+        txtDescription = binding.txtDescription;
+        spinnerLabels = binding.spinnerLabels;
+        photoView = binding.photoView;
+        btnCapturePhoto = binding.btnCapturePhoto;
+        btnSave = binding.btnSave;
+
+        btnCapturePhoto.setOnClickListener(v -> {
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
                     != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
@@ -49,7 +72,16 @@ public class AddAssetFragment extends Fragment {
             }
         });
 
+        loadLabels();
+
         return root;
+    }
+
+    private void loadLabels() {
+        List<String> labels = addAssetViewModel.getLabels(); // Fetch labels from database
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, labels);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerLabels.setAdapter(adapter);
     }
 
     private void dispatchTakePictureIntent() {

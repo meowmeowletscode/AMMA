@@ -26,7 +26,7 @@ public class UserSQL {
                 return rs.next();
             }
         } catch (Exception ex) {
-            ex.printStackTrace(); // Handle the exception appropriately
+            ex.printStackTrace();
         }
         return false;
     }
