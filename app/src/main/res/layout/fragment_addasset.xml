@@ -23,20 +23,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.011" />
 
-    <EditText
-        android:id="@+id/txtQuantity"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:ems="10"
-        android:hint="Required"
-        android:inputType="text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.766"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.297" />
-
     <TextView
         android:id="@+id/textView7"
         android:layout_width="wrap_content"
@@ -59,10 +45,38 @@
         android:inputType="text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.766"
+        app:layout_constraintHorizontal_bias="0.686"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.089" />
+
+    <EditText
+        android:id="@+id/txtBarcode"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:ems="10"
+        android:hint="Required"
+        android:inputType="text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.686"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.194" />
+
+    <EditText
+        android:id="@+id/txtQuantity"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:ems="10"
+        android:hint="Required"
+        android:inputType="text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.686"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.297" />
 
     <TextView
         android:id="@+id/textView8"
@@ -105,20 +119,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.598" />
 
-    <EditText
-        android:id="@+id/txtBarcode"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:ems="10"
-        android:hint="Required"
-        android:inputType="text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.766"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.194" />
-
     <ImageButton
         android:id="@+id/btnCapturePhoto"
         android:layout_width="86dp"
@@ -132,6 +132,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.788" />
+
+    <ImageButton
+        android:id="@+id/btnCaptureBarcode"
+        android:layout_width="50dp"
+        android:layout_height="35dp"
+        android:background="@drawable/edittext_border"
+        android:contentDescription="Capture Photo"
+        android:src="@drawable/ic_camera"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.977"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.202" />
 
     <ImageView
         android:id="@+id/photoView"

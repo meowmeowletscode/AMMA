@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
@@ -30,6 +31,7 @@ import com.example.amma.LoginActivity;
 import com.example.amma.UserSQL;
 import com.example.amma.databinding.FragmentAddassetBinding;
 
+import java.io.IOException;
 import java.util.List;
 
 public class AddAssetFragment extends Fragment {
@@ -38,7 +40,9 @@ public class AddAssetFragment extends Fragment {
     private FragmentAddassetBinding binding;
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
-    private static final int REQUEST_CAMERA_PERMISSION = 2;
+    private static final int REQUEST_GALLERY_IMAGE = 2;
+    private static final int REQUEST_FILE_IMAGE = 3;
+    private static final int REQUEST_CAMERA_PERMISSION = 100;
 
     private EditText txtAssetName;
     private EditText txtBarcode;
@@ -70,14 +74,7 @@ public class AddAssetFragment extends Fragment {
         btnClear = binding.btnClear;
         btnSave = binding.btnSave;
 
-        btnCapturePhoto.setOnClickListener(v -> {
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
-                    != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
-            } else {
-                dispatchTakePictureIntent();
-            }
-        });
+        btnCapturePhoto.setOnClickListener(v -> showImageSourceDialog());
 
         loadLabels();
 
@@ -94,6 +91,34 @@ public class AddAssetFragment extends Fragment {
         spinnerLabels.setAdapter(adapter);
     }
 
+    private void showImageSourceDialog() {
+        // Show a dialog to choose between Camera, Gallery, or File
+        String[] options = {"Camera", "Gallery", "File"};
+        new android.app.AlertDialog.Builder(requireContext())
+                .setTitle("Select Image Source")
+                .setItems(options, (dialog, which) -> {
+                    switch (which) {
+                        case 0:
+                            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
+                                    != PackageManager.PERMISSION_GRANTED) {
+                                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+                            } else {
+                                dispatchTakePictureIntent();
+                            }
+                            break;
+                        case 1:
+                            dispatchSelectGalleryIntent();
+                            break;
+                        case 2:
+                            dispatchSelectFileIntent();
+                            break;
+                    }
+                })
+                .show();
+    }
+
+
+
     private class BtnClearClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
@@ -101,6 +126,7 @@ public class AddAssetFragment extends Fragment {
             txtBarcode.setText("");
             txtQuantity.setText("");
             txtDescription.setText("");
+            spinnerLabels.setSelection(0);
             photoView.setImageDrawable(null);
         }
     }
@@ -173,13 +199,50 @@ public class AddAssetFragment extends Fragment {
         }
     }
 
+    private void dispatchSelectGalleryIntent() {
+        Intent selectGalleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(selectGalleryIntent, REQUEST_GALLERY_IMAGE);
+    }
+
+    private void dispatchSelectFileIntent() {
+        Intent selectFileIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        selectFileIntent.setType("image/*");
+        startActivityForResult(selectFileIntent, REQUEST_FILE_IMAGE);
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            photoView.setImageBitmap(imageBitmap);
+        if (resultCode == getActivity().RESULT_OK) {
+            Uri imageUri = null;
+            Bitmap imageBitmap = null;
+
+            switch (requestCode) {
+                case REQUEST_IMAGE_CAPTURE:
+                    Bundle extras = data.getExtras();
+                    imageBitmap = (Bitmap) extras.get("data");
+                    break;
+
+                case REQUEST_GALLERY_IMAGE:
+                    imageUri = data.getData();
+                    break;
+
+                case REQUEST_FILE_IMAGE:
+                    imageUri = data.getData();
+                    break;
+            }
+
+            if (imageUri != null) {
+                try {
+                    imageBitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), imageUri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (imageBitmap != null) {
+                photoView.setImageBitmap(imageBitmap);
+            }
         }
     }
 
@@ -190,7 +253,7 @@ public class AddAssetFragment extends Fragment {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 dispatchTakePictureIntent();
             } else {
-                // Permission denied, show a message to the user
+                Toast.makeText(getContext(), "Camera permission denied", Toast.LENGTH_SHORT).show();
             }
         }
     }
