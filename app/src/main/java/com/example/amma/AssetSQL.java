@@ -19,10 +19,10 @@ public class AssetSQL {
         connection = conn.SQLConnection();
     }
 
-    public void saveAsset(String assetName, String barcode, int quantity, String description, String label, Bitmap photo) {
-        String insertQuery = "INSERT INTO Asset (AssetName, Barcode, Quantity, Description, LabelName, Photo, CreatedAt) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    public boolean saveAsset(String assetName, String barcode, int quantity, String description, String label, Bitmap photo) {
 
         try {
+            String insertQuery = "INSERT INTO Asset (AssetName, Barcode, Quantity, Description, LabelName, Photo, CreatedAt) VALUES (?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(insertQuery);
             preparedStatement.setString(1, assetName);
             preparedStatement.setString(2, barcode);
@@ -54,8 +54,10 @@ public class AssetSQL {
 
             preparedStatement.executeUpdate();
             preparedStatement.close();
+            return true;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
     }
 }

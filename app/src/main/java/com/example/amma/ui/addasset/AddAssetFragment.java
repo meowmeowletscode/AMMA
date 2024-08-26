@@ -17,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -104,35 +105,66 @@ public class AddAssetFragment extends Fragment {
         }
     }
 
-    private class BtnSaveClickListener implements View.OnClickListener{
+    private class BtnSaveClickListener implements View.OnClickListener {
+        AssetSQL assetSQL = new AssetSQL();
 
         @Override
         public void onClick(View view) {
-            AssetSQL assetSQL = new AssetSQL();
-
+            // Get the input values
             String assetName = txtAssetName.getText().toString().trim();
             String barcode = txtBarcode.getText().toString().trim();
-            int quantity = Integer.parseInt(txtQuantity.getText().toString().trim());
+            String quantityStr = txtQuantity.getText().toString().trim();
             String description = txtDescription.getText().toString().trim();
             String label = spinnerLabels.getSelectedItem().toString();
 
+            // Check if required fields are empty
+            if (assetName.isEmpty() || barcode.isEmpty() || quantityStr.isEmpty() || label.isEmpty()) {
+                Toast.makeText(getContext(), "Please fill in all required fields.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Convert quantity to integer
+            int quantity;
+            try {
+                quantity = Integer.parseInt(quantityStr);
+            } catch (NumberFormatException e) {
+                Toast.makeText(getContext(), "Invalid quantity entered.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Get the photo if available
             Bitmap photo = null;
             if (photoView.getDrawable() != null) {
                 photo = ((BitmapDrawable) photoView.getDrawable()).getBitmap();
             }
 
-            // Call the method to save the asset
-            assetSQL.saveAsset(assetName, barcode, quantity, description.isEmpty() ? null : description, label, photo);
+            // Save the asset
+            boolean isSaved = assetSQL.saveAsset(
+                    assetName,
+                    barcode,
+                    quantity,
+                    description.isEmpty() ? null : description,
+                    label,
+                    photo
+            );
 
-            // Clear the fields after saving
-            txtAssetName.setText("");
-            txtBarcode.setText("");
-            txtQuantity.setText("");
-            txtDescription.setText("");
-            spinnerLabels.setSelection(0); // or set to default item if needed
-            photoView.setImageDrawable(null); // Clear the image
+            // Show appropriate toast based on save operation result
+            if (isSaved) {
+                Toast.makeText(getContext(), "Asset saved successfully!", Toast.LENGTH_SHORT).show();
+
+                // Clear the fields after saving
+                txtAssetName.setText("");
+                txtBarcode.setText("");
+                txtQuantity.setText("");
+                txtDescription.setText("");
+                spinnerLabels.setSelection(0); // Reset spinner to the first item
+                photoView.setImageDrawable(null); // Clear the photo view
+            } else {
+                Toast.makeText(getContext(), "Failed to save asset. Please try again.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
+
 
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
