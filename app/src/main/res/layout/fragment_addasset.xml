@@ -136,7 +136,7 @@
     <ImageButton
         android:id="@+id/btnCaptureBarcode"
         android:layout_width="50dp"
-        android:layout_height="35dp"
+        android:layout_height="48dp"
         android:background="@drawable/edittext_border"
         android:contentDescription="Capture Barcode"
         android:src="@drawable/ic_barcode"
