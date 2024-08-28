@@ -8,6 +8,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -229,6 +230,7 @@ public class AddAssetFragment extends Fragment {
     private void scanBarcode(InputImage image) {
         BarcodeScannerOptions options = new BarcodeScannerOptions.Builder()
                 .setBarcodeFormats(Barcode.FORMAT_ALL_FORMATS)
+                .enableAllPotentialBarcodes()
                 .build();
 
         BarcodeScanner scanner = BarcodeScanning.getClient(options);
@@ -237,6 +239,8 @@ public class AddAssetFragment extends Fragment {
                 .addOnSuccessListener(barcodes -> {
                     for (Barcode barcode : barcodes) {
                         String rawValue = barcode.getRawValue();
+                        int format = barcode.getFormat();
+                        Log.d("BarcodeScanner", "Scanned barcode: " + rawValue + ", Format: " + format);
                         txtBarcode.setText(rawValue);
                     }
                 })
