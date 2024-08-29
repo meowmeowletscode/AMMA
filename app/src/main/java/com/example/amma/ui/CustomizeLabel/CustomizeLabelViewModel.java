@@ -1,16 +1,16 @@
-package com.example.amma.ui.deleteasset;
+package com.example.amma.ui.CustomizeLabel;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class DeleteAssetViewModel extends ViewModel {
+public class CustomizeLabelViewModel extends ViewModel {
 
     private final MutableLiveData<String> mText;
 
-    public DeleteAssetViewModel() {
+    public CustomizeLabelViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is deleteasset fragment");
+        mText.setValue("Customize Label");
     }
 
     public LiveData<String> getText() {
