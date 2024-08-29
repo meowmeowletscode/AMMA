@@ -65,6 +65,28 @@ public class AssetSQL {
         }
     }
 
+    public boolean isBarcodeExists(String barcode) {
+        String query = "SELECT COUNT(*) FROM Asset WHERE Barcode = ?";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, barcode);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            // Check if the count is greater than 0
+            if (resultSet.next() && resultSet.getInt(1) > 0) {
+                resultSet.close();
+                preparedStatement.close();
+                return true; // Barcode exists
+            }
+
+            resultSet.close();
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false; // Barcode does not exist
+    }
+
     public Map<String, Object> searchAsset(String barcode) {
         Map<String, Object> assetDetails = new HashMap<>();
 

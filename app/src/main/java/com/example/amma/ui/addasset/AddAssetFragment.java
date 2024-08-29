@@ -1,6 +1,7 @@
 package com.example.amma.ui.addasset;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -289,6 +290,17 @@ public class AddAssetFragment extends Fragment {
             // Check if required fields are empty
             if (assetName.isEmpty() || barcode.isEmpty() || quantityStr.isEmpty() || label.isEmpty()) {
                 Toast.makeText(getContext(), "Please fill in all required fields.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Check if the barcode already exists
+            if (assetSQL.isBarcodeExists(barcode)) {
+                // Show a dialog if barcode already exists
+                new AlertDialog.Builder(getContext())
+                        .setTitle("Barcode Exists")
+                        .setMessage("The barcode already exists in the database. Please use a unique barcode.")
+                        .setPositiveButton("OK", null)
+                        .show();
                 return;
             }
 

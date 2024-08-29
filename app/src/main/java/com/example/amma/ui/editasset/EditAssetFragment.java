@@ -29,6 +29,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.amma.AssetSQL;
 import com.example.amma.R;
 import com.example.amma.databinding.FragmentEditassetBinding;
+import com.example.amma.ui.addasset.AddAssetFragment;
 import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
@@ -61,6 +62,7 @@ public class EditAssetFragment extends Fragment {
     private ImageView photoView;
     private ImageButton btnCapturePhoto;
     private ImageButton btnCaptureBarcode;
+    private Button btnClear;
     private Button btnDelete;
     private Button btnEdit;
 
@@ -83,6 +85,7 @@ public class EditAssetFragment extends Fragment {
         photoView = binding.photoView;
         btnCapturePhoto = binding.btnCapturePhoto;
         btnCaptureBarcode = binding.btnCaptureBarcode;
+        btnClear = binding.btnClear;
         btnDelete = binding.btnDelete;
         btnEdit = binding.btnEdit;
 
@@ -90,6 +93,7 @@ public class EditAssetFragment extends Fragment {
         btnCaptureBarcode.setOnClickListener(v -> showImageSourceDialogForBarcode());
 
         btnSearch.setOnClickListener(new BtnSearchClickListener());
+        btnClear.setOnClickListener(new BtnClearClickListener());
 //        btnEdit.setOnClickListener(new BtnEditClickListener());
 
         loadLabels();
@@ -101,6 +105,18 @@ public class EditAssetFragment extends Fragment {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, labels);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerLabels.setAdapter(adapter);
+    }
+
+    private class BtnClearClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            txtAssetName.setText("");
+            txtBarcode.setText("");
+            txtQuantity.setText("");
+            txtDescription.setText("");
+            spinnerLabels.setSelection(0);
+            photoView.setImageDrawable(null);
+        }
     }
 
     private class BtnSearchClickListener implements View.OnClickListener{
