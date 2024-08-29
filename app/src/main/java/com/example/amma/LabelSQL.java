@@ -1,6 +1,7 @@
 package com.example.amma;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -32,5 +33,51 @@ public class LabelSQL {
             e.printStackTrace();
         }
         return labels;
+    }
+
+    // Add a new label
+    public boolean addLabel(String labelName) {
+        String query = "INSERT INTO Label (LabelName) VALUES (?)";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, labelName);
+            int rowsAffected = preparedStatement.executeUpdate();
+            preparedStatement.close();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Update an existing label
+    public boolean updateLabel(String oldLabelName, String newLabelName) {
+        String query = "UPDATE Label SET LabelName = ? WHERE LabelName = ?";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, newLabelName);
+            preparedStatement.setString(2, oldLabelName);
+            int rowsAffected = preparedStatement.executeUpdate();
+            preparedStatement.close();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Delete a label
+    public boolean deleteLabel(String labelName) {
+        String query = "DELETE FROM Label WHERE LabelName = ?";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, labelName);
+            int rowsAffected = preparedStatement.executeUpdate();
+            preparedStatement.close();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
