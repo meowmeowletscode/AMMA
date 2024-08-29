@@ -130,4 +130,44 @@ public class AssetSQL {
         return null; // Return null if the asset is not found
     }
 
+    public boolean editAsset(String assetName, String barcode, int quantity, String description, String label, Bitmap photo) {
+        try {
+            String updateQuery = "UPDATE Asset SET AssetName = ?, Quantity = ?, Description = ?, LabelName = ?, Photo = ? WHERE Barcode = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(updateQuery);
+            preparedStatement.setString(1, assetName);
+            preparedStatement.setInt(2, quantity);
+
+            // Set Description (can be NULL)
+            if (description == null || description.isEmpty()) {
+                preparedStatement.setNull(3, java.sql.Types.VARCHAR);
+            } else {
+                preparedStatement.setString(3, description);
+            }
+
+            // Set Label
+            preparedStatement.setString(4, label);
+
+            // Convert Bitmap to Byte Array for Photo (can be NULL)
+            if (photo != null) {
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                photo.compress(Bitmap.CompressFormat.PNG, 100, bos);
+                byte[] data = bos.toByteArray();
+                preparedStatement.setBytes(5, data);
+            } else {
+                preparedStatement.setNull(5, java.sql.Types.BINARY);
+            }
+
+            // Set Barcode for the WHERE clause
+            preparedStatement.setString(6, barcode);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            preparedStatement.close();
+            return rowsAffected > 0; // Return true if update was successful
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
 }

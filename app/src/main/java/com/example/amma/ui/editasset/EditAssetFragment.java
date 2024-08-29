@@ -1,9 +1,11 @@
 package com.example.amma.ui.editasset;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -94,7 +96,7 @@ public class EditAssetFragment extends Fragment {
 
         btnSearch.setOnClickListener(new BtnSearchClickListener());
         btnClear.setOnClickListener(new BtnClearClickListener());
-//        btnEdit.setOnClickListener(new BtnEditClickListener());
+        btnEdit.setOnClickListener(new BtnEditClickListener());
 
         loadLabels();
         return root;
@@ -165,6 +167,68 @@ public class EditAssetFragment extends Fragment {
 
         }
     }
+
+    private class BtnEditClickListener implements View.OnClickListener {
+        AssetSQL assetSQL = new AssetSQL();
+
+        @Override
+        public void onClick(View v) {
+            String assetName = txtAssetName.getText().toString().trim();
+            String barcode = txtBarcode.getText().toString().trim();
+            String quantityStr = txtQuantity.getText().toString().trim();
+            String description = txtDescription.getText().toString().trim();
+            String label = spinnerLabels.getSelectedItem().toString();
+
+            // Check if required fields are empty
+            if (assetName.isEmpty() || barcode.isEmpty() || quantityStr.isEmpty() || label.isEmpty()) {
+                Toast.makeText(getContext(), "Please fill in all required fields.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Convert quantity to integer
+            int quantity;
+            try {
+                quantity = Integer.parseInt(quantityStr);
+            } catch (NumberFormatException e) {
+                Toast.makeText(getContext(), "Invalid quantity entered.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Get the photo if available
+            final Bitmap photo;
+            if (photoView.getDrawable() != null) {
+                photo = ((BitmapDrawable) photoView.getDrawable()).getBitmap();
+            } else {
+                photo = null;
+            }
+
+            // Show confirmation dialog
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Confirm Changes")
+                    .setMessage("Are you sure you want to update this asset with the new information?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        // Proceed with the update
+                        boolean isUpdated = assetSQL.editAsset(
+                                assetName,
+                                barcode,
+                                quantity,
+                                description.isEmpty() ? null : description,
+                                label,
+                                photo
+                        );
+
+                        // Show appropriate toast based on update operation result
+                        if (isUpdated) {
+                            Toast.makeText(getContext(), "Asset updated successfully!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getContext(), "Failed to update asset. Please try again.", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .setNegativeButton("No", null) // Dismiss the dialog
+                    .show();
+        }
+    }
+
 
     private void showImageSourceDialogForPhoto() {
         String[] options = {"Camera", "Gallery", "File"};
