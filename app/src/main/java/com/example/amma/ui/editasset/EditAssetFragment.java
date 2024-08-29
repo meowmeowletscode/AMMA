@@ -97,6 +97,7 @@ public class EditAssetFragment extends Fragment {
         btnSearch.setOnClickListener(new BtnSearchClickListener());
         btnClear.setOnClickListener(new BtnClearClickListener());
         btnEdit.setOnClickListener(new BtnEditClickListener());
+        btnDelete.setOnClickListener(new BtnDeleteClickListener ());
 
         loadLabels();
         return root;
@@ -226,6 +227,51 @@ public class EditAssetFragment extends Fragment {
                     })
                     .setNegativeButton("No", null) // Dismiss the dialog
                     .show();
+        }
+    }
+
+    private class BtnDeleteClickListener implements View.OnClickListener {
+        AssetSQL assetSQL = new AssetSQL();
+
+        @Override
+        public void onClick(View v) {
+            final String barcode = txtBarcode.getText().toString().trim();
+
+            // Check if barcode is empty
+            if (barcode.isEmpty()) {
+                Toast.makeText(getContext(), "Barcode cannot be empty.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Show confirmation dialog
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Confirm Deletion")
+                    .setMessage("Are you sure you want to delete this asset?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        // Proceed with the delete
+                        boolean isDeleted = assetSQL.deleteAsset(barcode);
+
+                        // Show appropriate toast based on delete operation result
+                        if (isDeleted) {
+                            Toast.makeText(getContext(), "Asset deleted successfully!", Toast.LENGTH_SHORT).show();
+
+                            // Optionally clear fields or navigate away
+                            clearFields();
+                        } else {
+                            Toast.makeText(getContext(), "Failed to delete asset. Please try again.", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .setNegativeButton("No", null) // Dismiss the dialog
+                    .show();
+        }
+
+        private void clearFields() {
+            txtAssetName.setText("");
+            txtBarcode.setText("");
+            txtQuantity.setText("");
+            txtDescription.setText("");
+            spinnerLabels.setSelection(0); // Reset spinner to the first item
+            photoView.setImageDrawable(null); // Clear the photo view
         }
     }
 

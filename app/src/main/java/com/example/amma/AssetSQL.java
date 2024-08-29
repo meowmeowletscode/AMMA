@@ -132,7 +132,7 @@ public class AssetSQL {
 
     public boolean editAsset(String assetName, String barcode, int quantity, String description, String label, Bitmap photo) {
         try {
-            String updateQuery = "UPDATE Asset SET AssetName = ?, Quantity = ?, Description = ?, LabelName = ?, Photo = ? WHERE Barcode = ?";
+            String updateQuery = "UPDATE Asset SET AssetName = ?, Quantity = ?, Description = ?, LabelName = ?, Photo = ?, EditedAt = ? WHERE Barcode = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(updateQuery);
             preparedStatement.setString(1, assetName);
             preparedStatement.setInt(2, quantity);
@@ -157,12 +157,31 @@ public class AssetSQL {
                 preparedStatement.setNull(5, java.sql.Types.BINARY);
             }
 
+            // Set EditedAt to current date and time
+            Timestamp editedAt = new Timestamp(new Date().getTime());
+            preparedStatement.setTimestamp(6, editedAt);
+
             // Set Barcode for the WHERE clause
-            preparedStatement.setString(6, barcode);
+            preparedStatement.setString(7, barcode);
 
             int rowsAffected = preparedStatement.executeUpdate();
             preparedStatement.close();
             return rowsAffected > 0; // Return true if update was successful
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean deleteAsset(String barcode) {
+        try {
+            String deleteQuery = "DELETE FROM Asset WHERE Barcode = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery);
+            preparedStatement.setString(1, barcode);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            preparedStatement.close();
+            return rowsAffected > 0; // Return true if delete was successful
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
