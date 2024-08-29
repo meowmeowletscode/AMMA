@@ -1,13 +1,17 @@
 package com.example.amma;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AssetSQL {
 
@@ -60,4 +64,48 @@ public class AssetSQL {
             return false;
         }
     }
+
+    public Map<String, Object> searchAsset(String barcode) {
+        Map<String, Object> assetDetails = new HashMap<>();
+
+        try {
+            // SQL query to search for the asset by barcode
+            String selectQuery = "SELECT AssetName, Barcode, Quantity, Description, LabelName, Photo FROM Asset WHERE Barcode = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(selectQuery);
+            preparedStatement.setString(1, barcode);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                // Retrieve asset details from the result set
+                assetDetails.put("AssetName", resultSet.getString("AssetName"));
+                assetDetails.put("Barcode", resultSet.getString("Barcode"));
+                assetDetails.put("Quantity", resultSet.getInt("Quantity"));
+                assetDetails.put("Description", resultSet.getString("Description"));
+                assetDetails.put("LabelName", resultSet.getString("LabelName"));
+
+                // Convert byte array back to Bitmap if photo exists
+                byte[] photoBytes = resultSet.getBytes("Photo");
+                if (photoBytes != null) {
+                    Bitmap photo = BitmapFactory.decodeByteArray(photoBytes, 0, photoBytes.length);
+                    assetDetails.put("Photo", photo);
+                } else {
+                    assetDetails.put("Photo", null);
+                }
+
+                // Close the result set and prepared statement
+                resultSet.close();
+                preparedStatement.close();
+                return assetDetails;
+            }
+
+            // Close the result set and prepared statement if no asset found
+            resultSet.close();
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null; // Return null if the asset is not found
+    }
+
 }

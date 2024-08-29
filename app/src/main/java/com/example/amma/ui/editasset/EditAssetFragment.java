@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -26,6 +27,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.amma.AssetSQL;
+import com.example.amma.R;
 import com.example.amma.databinding.FragmentEditassetBinding;
 import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
@@ -34,6 +36,8 @@ import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 public class EditAssetFragment extends Fragment {
 
@@ -48,6 +52,7 @@ public class EditAssetFragment extends Fragment {
     private static final int REQUEST_FILE_IMAGE_FOR_BARCODE = 6;
     private static final int REQUEST_CAMERA_PERMISSION = 100;
 
+    private Button btnSearch;
     private EditText txtAssetName;
     private EditText txtBarcode;
     private EditText txtQuantity;
@@ -69,6 +74,7 @@ public class EditAssetFragment extends Fragment {
         editAssetViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
         //binding the id
+        btnSearch = binding.btnSearch;
         txtAssetName = binding.txtAssetName;
         txtBarcode = binding.txtBarcode;
         txtQuantity = binding.txtQuantity;
@@ -83,12 +89,21 @@ public class EditAssetFragment extends Fragment {
         btnCapturePhoto.setOnClickListener(v -> showImageSourceDialogForPhoto());
         btnCaptureBarcode.setOnClickListener(v -> showImageSourceDialogForBarcode());
 
-        btnEdit.setOnClickListener(new BtnEditClickListener());
+        btnSearch.setOnClickListener(new BtnSearchClickListener());
+//        btnEdit.setOnClickListener(new BtnEditClickListener());
 
+        loadLabels();
         return root;
     }
 
-    private class BtnEditClickListener implements View.OnClickListener{
+    private void loadLabels() {
+        List<String> labels = editAssetViewModel.getLabels(); // Fetch labels from database
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, labels);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerLabels.setAdapter(adapter);
+    }
+
+    private class BtnSearchClickListener implements View.OnClickListener{
         AssetSQL assetSQL = new AssetSQL();
 
         @Override
@@ -100,6 +115,38 @@ public class EditAssetFragment extends Fragment {
                 Toast.makeText(getContext(), "Please fill in barcode to search.", Toast.LENGTH_SHORT).show();
                 return;
             }
+
+            // Retrieve the asset details using the barcode
+            Map<String, Object> assetDetails = assetSQL.searchAsset(barcode);
+
+            // Check if asset was found
+            if (assetDetails == null) {
+                Toast.makeText(getContext(), "Asset not found.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Display the retrieved asset details in the UI
+            txtAssetName.setText((String) assetDetails.get("AssetName"));
+            txtQuantity.setText(String.valueOf(assetDetails.get("Quantity")));
+            txtDescription.setText((String) assetDetails.get("Description"));
+
+            String labelName = (String) assetDetails.get("LabelName");
+            if (labelName != null) {
+                ArrayAdapter<String> adapter = (ArrayAdapter<String>) spinnerLabels.getAdapter();
+                int position = adapter.getPosition(labelName);
+                if (position >= 0) {
+                    spinnerLabels.setSelection(position);
+                }
+            }
+
+            // Display the photo if available
+            Bitmap photo = (Bitmap) assetDetails.get("Photo");
+            if (photo != null) {
+                photoView.setImageBitmap(photo);
+            } else {
+                photoView.setImageResource(R.drawable.placeholder_image); // Set a placeholder if no photo is available
+            }
+
         }
     }
 
