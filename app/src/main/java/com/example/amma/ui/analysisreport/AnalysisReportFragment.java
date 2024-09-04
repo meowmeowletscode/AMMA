@@ -1,4 +1,4 @@
-package com.example.amma.ui.usercontrol;
+package com.example.amma.ui.analysisreport;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,23 +10,23 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.amma.databinding.FragmentUsercontrolBinding;
+import com.example.amma.databinding.FragmentAnalysisreportBinding;
 
+public class AnalysisReportFragment extends Fragment {
 
-public class UserControlFragment extends Fragment {
-
-    private UserControlViewModel userControlViewModel;
-    private FragmentUsercontrolBinding binding;
+    private AnalysisReportViewModel analysisReportViewModel;
+    private FragmentAnalysisreportBinding binding;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        userControlViewModel = new ViewModelProvider(this).get(UserControlViewModel.class);
+        analysisReportViewModel = new ViewModelProvider(this).get(AnalysisReportViewModel.class);
 
-        binding = FragmentUsercontrolBinding.inflate(inflater, container, false);
+        binding = FragmentAnalysisreportBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         final TextView textView = binding.txtTitle;
-        userControlViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        analysisReportViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+
 
         return root;
     }

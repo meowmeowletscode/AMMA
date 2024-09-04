@@ -27,6 +27,11 @@
             android:icon="@drawable/ic_menu_usercontrol"
             android:title="@string/menu_userAccountControl" />
 
+        <item
+            android:id="@+id/nav_analysisReport"
+            android:icon="@drawable/ic_menu_analysisreport"
+            android:title="@string/menu_analysisReport" />
+
 
     </group>
 </menu>
