@@ -3,8 +3,11 @@ package com.example.amma;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserSQL {
 
@@ -14,6 +17,104 @@ public class UserSQL {
     public UserSQL() {
         conn = new ConSQL();
         connection = conn.SQLConnection();
+    }
+
+    //List for User Account Control
+    public List<User> getUsers() {
+        List<User> users = new ArrayList<>();
+        String query = "SELECT UserName, Role FROM [User]";
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+            while (resultSet.next()) {
+                String userName = resultSet.getString("UserName");
+                String role = resultSet.getString("Role");
+                users.add(new User(userName, role));
+            }
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return users;
+    }
+
+    public boolean addUser(String username, String password, String role) {
+        String insertQuery = "INSERT INTO [User] (UserName, Password, Role) VALUES (?, ?, ?)";
+        try {
+            PreparedStatement statement = connection.prepareStatement(insertQuery);
+            statement.setString(1, username);
+            statement.setString(2, password);
+            statement.setString(3, role); // Add role here
+            statement.executeUpdate();
+            statement.close();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+    public boolean editUserPassword(String username, String oldPassword, String newPassword) {
+        // Update password only after verifying the old password
+        String verifyQuery = "SELECT * FROM [User] WHERE UserName = ? AND Password = ?";
+        String updateQuery = "UPDATE [User] SET Password = ? WHERE UserName = ?";
+
+        try {
+            // Verify old password
+            PreparedStatement verifyStatement = connection.prepareStatement(verifyQuery);
+            verifyStatement.setString(1, username);
+            verifyStatement.setString(2, oldPassword);
+            ResultSet resultSet = verifyStatement.executeQuery();
+
+            if (resultSet.next()) {
+                // Old password is correct, proceed with update
+                PreparedStatement updateStatement = connection.prepareStatement(updateQuery);
+                updateStatement.setString(1, newPassword);
+                updateStatement.setString(2, username);
+                updateStatement.executeUpdate();
+                updateStatement.close();
+                resultSet.close();
+                verifyStatement.close();
+                return true;
+            }
+            resultSet.close();
+            verifyStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean deleteUser(String username, String password) {
+        // Delete user only after verifying the password
+        String verifyQuery = "SELECT * FROM [User] WHERE UserName = ? AND Password = ?";
+        String deleteQuery = "DELETE FROM [User] WHERE UserName = ?";
+
+        try {
+            // Verify password
+            PreparedStatement verifyStatement = connection.prepareStatement(verifyQuery);
+            verifyStatement.setString(1, username);
+            verifyStatement.setString(2, password);
+            ResultSet resultSet = verifyStatement.executeQuery();
+
+            if (resultSet.next()) {
+                // Password is correct, proceed with deletion
+                PreparedStatement deleteStatement = connection.prepareStatement(deleteQuery);
+                deleteStatement.setString(1, username);
+                deleteStatement.executeUpdate();
+                deleteStatement.close();
+                resultSet.close();
+                verifyStatement.close();
+                return true;
+            }
+            resultSet.close();
+            verifyStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     // Method to validate if the user exists

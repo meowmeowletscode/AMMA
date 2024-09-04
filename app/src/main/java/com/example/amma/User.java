@@ -5,10 +5,14 @@ public class User {
     private String password;
     private String role;
 
-    // Constructor
     public User(String userName, String password, String role) {
         this.userName = userName;
         this.password = password;
+        this.role = role;
+    }
+
+    public User(String userName, String role) {
+        this.userName = userName;
         this.role = role;
     }
 
