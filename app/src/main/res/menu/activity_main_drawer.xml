@@ -18,7 +18,7 @@
             android:title="@string/menu_editAsset" />
 
         <item
-            android:id="@+id/nav_deleteAsset"
+            android:id="@+id/nav_customizeLabel"
             android:icon="@drawable/ic_menu_label"
             android:title="@string/menu_customizeLabel" />
     </group>

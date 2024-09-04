@@ -24,7 +24,7 @@
         tools:layout="@layout/fragment_editasset" />
 
     <fragment
-        android:id="@+id/nav_deleteAsset"
+        android:id="@+id/nav_customizeLabel"
         android:name="com.example.amma.ui.CustomizeLabel.CustomizeLabelFragment"
         android:label="@string/menu_customizeLabel"
         tools:layout="@layout/fragment_customizelabel" />
