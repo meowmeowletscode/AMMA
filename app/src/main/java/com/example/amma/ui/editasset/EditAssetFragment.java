@@ -31,7 +31,6 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.amma.AssetSQL;
 import com.example.amma.R;
 import com.example.amma.databinding.FragmentEditassetBinding;
-import com.example.amma.ui.addasset.AddAssetFragment;
 import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
 import com.google.mlkit.vision.barcode.BarcodeScanning;

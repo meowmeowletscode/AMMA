@@ -25,9 +25,15 @@
 
     <fragment
         android:id="@+id/nav_customizeLabel"
-        android:name="com.example.amma.ui.CustomizeLabel.CustomizeLabelFragment"
+        android:name="com.example.amma.ui.customizelabel.CustomizeLabelFragment"
         android:label="@string/menu_customizeLabel"
         tools:layout="@layout/fragment_customizelabel" />
+
+    <fragment
+        android:id="@+id/nav_userControl"
+        android:name="com.example.amma.ui.usercontrol.UserControlFragment"
+        android:label="@string/menu_userAccountControl"
+        tools:layout="@layout/fragment_usercontrol" />
 
 
 </navigation>

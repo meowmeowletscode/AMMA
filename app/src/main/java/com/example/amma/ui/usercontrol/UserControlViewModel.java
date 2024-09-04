@@ -1,19 +1,21 @@
-package com.example.amma.ui.CustomizeLabel;
+package com.example.amma.ui.usercontrol;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class CustomizeLabelViewModel extends ViewModel {
+
+public class UserControlViewModel extends ViewModel {
 
     private final MutableLiveData<String> mText;
 
-    public CustomizeLabelViewModel() {
+    public UserControlViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("Customize Label");
+        mText.setValue("User Account Control");
     }
 
     public LiveData<String> getText() {
         return mText;
     }
+
 }

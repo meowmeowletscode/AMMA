@@ -21,5 +21,12 @@
             android:id="@+id/nav_customizeLabel"
             android:icon="@drawable/ic_menu_label"
             android:title="@string/menu_customizeLabel" />
+
+        <item
+            android:id="@+id/nav_userControl"
+            android:icon="@drawable/ic_menu_usercontrol"
+            android:title="@string/menu_userAccountControl" />
+
+
     </group>
 </menu>

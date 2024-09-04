@@ -41,7 +41,7 @@ import java.util.List;
 
 public class AddAssetFragment extends Fragment {
 
-    private AddAssetViewModel addAssetViewModel;
+    private com.example.amma.ui.addasset.AddAssetViewModel addAssetViewModel;
     private FragmentAddassetBinding binding;
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -64,7 +64,7 @@ public class AddAssetFragment extends Fragment {
     private Button btnSave;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        addAssetViewModel = new ViewModelProvider(this).get(AddAssetViewModel.class);
+        addAssetViewModel = new ViewModelProvider(this).get(com.example.amma.ui.addasset.AddAssetViewModel.class);
 
         binding = FragmentAddassetBinding.inflate(inflater, container, false);
         View root = binding.getRoot();

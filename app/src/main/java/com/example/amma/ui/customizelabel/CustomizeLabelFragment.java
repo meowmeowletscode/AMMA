@@ -1,4 +1,4 @@
-package com.example.amma.ui.CustomizeLabel;
+package com.example.amma.ui.customizelabel;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
