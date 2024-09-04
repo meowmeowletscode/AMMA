@@ -41,5 +41,11 @@
         android:label="@string/menu_analysisReport"
         tools:layout="@layout/fragment_analysisreport" />
 
+    <fragment
+        android:id="@+id/nav_importAsset"
+        android:name="com.example.amma.ui.importasset.ImportAssetFragment"
+        android:label="@string/menu_importAsset"
+        tools:layout="@layout/fragment_importasset" />
+
 
 </navigation>

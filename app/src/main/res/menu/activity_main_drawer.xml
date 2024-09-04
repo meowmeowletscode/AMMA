@@ -32,6 +32,11 @@
             android:icon="@drawable/ic_menu_analysisreport"
             android:title="@string/menu_analysisReport" />
 
+        <item
+            android:id="@+id/nav_importAsset"
+            android:icon="@drawable/ic_menu_importasset"
+            android:title="@string/menu_importAsset" />
+
 
     </group>
 </menu>

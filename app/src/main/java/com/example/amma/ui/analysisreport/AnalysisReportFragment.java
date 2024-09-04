@@ -14,12 +14,12 @@ import com.example.amma.databinding.FragmentAnalysisreportBinding;
 
 public class AnalysisReportFragment extends Fragment {
 
-    private AnalysisReportViewModel analysisReportViewModel;
+    private com.example.amma.ui.analysisreport.AnalysisReportViewModel analysisReportViewModel;
     private FragmentAnalysisreportBinding binding;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        analysisReportViewModel = new ViewModelProvider(this).get(AnalysisReportViewModel.class);
+        analysisReportViewModel = new ViewModelProvider(this).get(com.example.amma.ui.analysisreport.AnalysisReportViewModel.class);
 
         binding = FragmentAnalysisreportBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
