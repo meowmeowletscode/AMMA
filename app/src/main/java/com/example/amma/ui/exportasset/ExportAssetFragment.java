@@ -1,4 +1,4 @@
-package com.example.amma.ui.importasset;
+package com.example.amma.ui.exportasset;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,22 +10,22 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.amma.databinding.FragmentImportassetBinding;
+import com.example.amma.databinding.FragmentExportassetBinding;
 
-public class ImportAssetFragment extends Fragment {
+public class ExportAssetFragment extends Fragment {
 
-    private com.example.amma.ui.importasset.ImportAssetViewModel importAssetViewModel;
-    private FragmentImportassetBinding binding;
+    private ExportAssetViewModel exportAssetViewModel;
+    private FragmentExportassetBinding binding;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        importAssetViewModel = new ViewModelProvider(this).get(com.example.amma.ui.importasset.ImportAssetViewModel.class);
+        exportAssetViewModel = new ViewModelProvider(this).get(ExportAssetViewModel.class);
 
-        binding = FragmentImportassetBinding.inflate(inflater, container, false);
+        binding = FragmentExportassetBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         final TextView textView = binding.txtTitle;
-        importAssetViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        exportAssetViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
 
         return root;

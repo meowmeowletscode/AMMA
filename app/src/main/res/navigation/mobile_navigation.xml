@@ -47,5 +47,11 @@
         android:label="@string/menu_importAsset"
         tools:layout="@layout/fragment_importasset" />
 
+    <fragment
+        android:id="@+id/nav_exportAsset"
+        android:name="com.example.amma.ui.exportasset.ExportAssetFragment"
+        android:label="@string/menu_exportAsset"
+        tools:layout="@layout/fragment_exportasset" />
+
 
 </navigation>

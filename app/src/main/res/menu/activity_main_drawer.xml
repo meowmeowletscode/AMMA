@@ -37,6 +37,11 @@
             android:icon="@drawable/ic_menu_importasset"
             android:title="@string/menu_importAsset" />
 
+        <item
+            android:id="@+id/nav_exportAsset"
+            android:icon="@drawable/ic_menu_exportasset"
+            android:title="@string/menu_exportAsset" />
+
 
     </group>
 </menu>
