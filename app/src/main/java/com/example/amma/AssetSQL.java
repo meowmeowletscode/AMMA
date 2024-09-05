@@ -8,9 +8,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AssetSQL {
@@ -23,8 +26,79 @@ public class AssetSQL {
         connection = conn.SQLConnection();
     }
 
-    public boolean saveAsset(String assetName, String barcode, int quantity, String description, String label, Bitmap photo) {
+    public List<Asset> getAllAssets() {
+        List<Asset> assets = new ArrayList<>();
+        String query = "SELECT * FROM Asset";
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+            while (resultSet.next()) {
+                Asset asset = new Asset(
+                        resultSet.getString("AssetName"),
+                        resultSet.getString("Barcode"),
+                        resultSet.getInt("Quantity"),
+                        resultSet.getString("Description"),
+                        resultSet.getString("LabelName")
+                );
+                assets.add(asset);
+            }
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return assets;
+    }
 
+    public List<Asset> getFilteredAssets(String fromDate, String toDate, String label) {
+        List<Asset> assets = new ArrayList<>();
+        StringBuilder queryBuilder = new StringBuilder("SELECT * FROM Asset WHERE 1=1");
+
+        // Add date range filter
+        if (!fromDate.isEmpty()) {
+            queryBuilder.append(" AND CreatedAt >= ?");
+        }
+        if (!toDate.isEmpty()) {
+            queryBuilder.append(" AND CreatedAt <= ?");
+        }
+        if (!label.equals("All")) {
+            queryBuilder.append(" AND LabelName = ?");
+        }
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(queryBuilder.toString());
+
+            int index = 1;
+            if (!fromDate.isEmpty()) {
+                preparedStatement.setDate(index++, java.sql.Date.valueOf(fromDate));
+            }
+            if (!toDate.isEmpty()) {
+                preparedStatement.setDate(index++, java.sql.Date.valueOf(toDate));
+            }
+            if (!label.equals("All")) {
+                preparedStatement.setString(index++, label);
+            }
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                Asset asset = new Asset(
+                        resultSet.getString("AssetName"),
+                        resultSet.getString("Barcode"),
+                        resultSet.getInt("Quantity"),
+                        resultSet.getString("Description"),
+                        resultSet.getString("LabelName")
+                );
+                assets.add(asset);
+            }
+            resultSet.close();
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return assets;
+    }
+
+    public boolean saveAsset(String assetName, String barcode, int quantity, String description, String label, Bitmap photo) {
         try {
             String insertQuery = "INSERT INTO Asset (AssetName, Barcode, Quantity, Description, LabelName, Photo, CreatedAt) VALUES (?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(insertQuery);
