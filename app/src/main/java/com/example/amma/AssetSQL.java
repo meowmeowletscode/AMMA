@@ -2,6 +2,9 @@ package com.example.amma;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import java.io.ByteArrayOutputStream;
 import java.sql.Connection;
@@ -70,27 +73,42 @@ public class AssetSQL {
 
             int index = 1;
             if (!fromDate.isEmpty()) {
-                // Ensure the format is yyyy-MM-dd
-                preparedStatement.setDate(index++, java.sql.Date.valueOf(fromDate));
+                // Ensure the fromDate is in the correct format: yyyy-MM-dd, then append time
+                String formattedFromDate = fromDate + " 00:00:00.000"; // Ensure it covers the full start of the day
+                Log.d("SQL Debug", "Formatted From Date: " + formattedFromDate);
+                preparedStatement.setTimestamp(index++, java.sql.Timestamp.valueOf(formattedFromDate));
             }
+
             if (!toDate.isEmpty()) {
-                // Ensure the format is yyyy-MM-dd
-                preparedStatement.setDate(index++, java.sql.Date.valueOf(toDate));
+                // Ensure the toDate is in the correct format: yyyy-MM-dd, then append time
+                String formattedToDate = toDate + " 23:59:59.999"; // Ensure it covers the full end of the day
+                Log.d("SQL Debug", "Formatted To Date: " + formattedToDate);
+                preparedStatement.setTimestamp(index++, java.sql.Timestamp.valueOf(formattedToDate));
             }
+
             if (!label.equals("All")) {
+                Log.d("SQL Debug", "Label Filter: " + label);
                 preparedStatement.setString(index++, label);
             }
 
+            // Log the final query command with parameters
+            Log.d("SQL Debug", "Executing Query: " + queryBuilder.toString());
+
             ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                Asset asset = new Asset(
-                        resultSet.getString("AssetName"),
-                        resultSet.getString("Barcode"),
-                        resultSet.getInt("Quantity"),
-                        resultSet.getString("Description"),
-                        resultSet.getString("LabelName")
-                );
-                assets.add(asset);
+            if (!resultSet.next()) {
+                Log.e("Query Execution", "No results found.");
+            } else {
+                // Process the first row that was checked
+                do {
+                    Asset asset = new Asset(
+                            resultSet.getString("AssetName"),
+                            resultSet.getString("Barcode"),
+                            resultSet.getInt("Quantity"),
+                            resultSet.getString("Description"),
+                            resultSet.getString("LabelName")
+                    );
+                    assets.add(asset);
+                } while (resultSet.next());  // Continue processing remaining rows
             }
             resultSet.close();
             preparedStatement.close();
