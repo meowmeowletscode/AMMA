@@ -1,5 +1,6 @@
 [versions]
 agp = "8.5.1"
+barcodeScanning = "17.3.0"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
@@ -15,8 +16,12 @@ firebaseAuth = "23.0.0"
 annotationJvm = "1.8.0"
 firebaseFirestore = "25.0.0"
 activity = "1.8.0"
+playServicesMlkitBarcodeScanning = "18.3.1"
+poi = "5.2.3"
 
 [libraries]
+annotation = { module = "androidx.annotation:annotation", version.ref = "annotationJvm" }
+barcode-scanning = { module = "com.google.mlkit:barcode-scanning", version.ref = "barcodeScanning" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -31,6 +36,9 @@ firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version
 annotation-jvm = { group = "androidx.annotation", name = "annotation-jvm", version.ref = "annotationJvm" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+play-services-mlkit-barcode-scanning = { module = "com.google.android.gms:play-services-mlkit-barcode-scanning", version.ref = "playServicesMlkitBarcodeScanning" }
+poi = { module = "org.apache.poi:poi", version.ref = "poi" }
+poi-ooxml = { module = "org.apache.poi:poi-ooxml", version.ref = "poi" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

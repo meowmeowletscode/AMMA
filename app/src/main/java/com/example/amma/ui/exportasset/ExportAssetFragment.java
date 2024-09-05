@@ -17,6 +17,8 @@ public class ExportAssetFragment extends Fragment {
     private ExportAssetViewModel exportAssetViewModel;
     private FragmentExportassetBinding binding;
 
+    private static final int REQUEST_CODE_PERMISSION = 100;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         exportAssetViewModel = new ViewModelProvider(this).get(ExportAssetViewModel.class);
