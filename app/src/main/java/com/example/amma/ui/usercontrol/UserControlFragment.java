@@ -2,6 +2,8 @@ package com.example.amma.ui.usercontrol;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.amma.R;
 import com.example.amma.User;
+import com.example.amma.UserManager;
 import com.example.amma.UserSQL;
 import com.example.amma.UserAdapter;
 import com.example.amma.databinding.FragmentUsercontrolBinding;
@@ -43,6 +46,21 @@ public class UserControlFragment extends Fragment {
 
         binding = FragmentUsercontrolBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        // Check the current user's role
+        User currentUser = UserManager.getInstance().getCurrentUser();
+
+        // Check if no user is logged in or if the user is not an Admin
+        if (currentUser == null || !"Admin".equals(currentUser.getRole())) {
+            // Display a toast message and navigate back after a short delay to avoid FragmentManager issues
+            Toast.makeText(getContext(), "Access denied. Only Admins can view this page.", Toast.LENGTH_SHORT).show();
+
+            // Use Handler to safely navigate back to the previous fragment
+            new Handler(Looper.getMainLooper()).postDelayed(() -> requireActivity().onBackPressed(), 100);
+
+            // Return early to prevent the rest of the fragment from being set up
+            return null;
+        }
 
         // Initialize UserSQL and RecyclerView
         userSQL = new UserSQL();

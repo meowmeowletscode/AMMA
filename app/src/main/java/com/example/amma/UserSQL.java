@@ -40,12 +40,15 @@ public class UserSQL {
     }
 
     public boolean addUser(String username, String password, String role) {
-        String insertQuery = "INSERT INTO [User] (UserName, Password, Role) VALUES (?, ?, ?)";
+        String insertQuery = "INSERT INTO [User] (UserName, Password, Role, CreatedAt) VALUES (?, ?, ?, ?)";
         try {
             PreparedStatement statement = connection.prepareStatement(insertQuery);
             statement.setString(1, username);
             statement.setString(2, password);
-            statement.setString(3, role); // Add role here
+            statement.setString(3, role);
+
+            statement.setTimestamp(4, new java.sql.Timestamp(System.currentTimeMillis()));
+
             statement.executeUpdate();
             statement.close();
             return true;
@@ -54,6 +57,7 @@ public class UserSQL {
             return false;
         }
     }
+
 
 
     public boolean editUserPassword(String username, String oldPassword, String newPassword) {

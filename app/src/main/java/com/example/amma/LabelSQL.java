@@ -37,34 +37,43 @@ public class LabelSQL {
 
     // Add a new label
     public boolean addLabel(String labelName) {
-        String query = "INSERT INTO Label (LabelName) VALUES (?)";
+        String query = "INSERT INTO Label (LabelName, CreatedAt) VALUES (?, ?)";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, labelName);
+
+            preparedStatement.setTimestamp(2, new java.sql.Timestamp(System.currentTimeMillis()));
+
             int rowsAffected = preparedStatement.executeUpdate();
             preparedStatement.close();
-            return rowsAffected > 0;
+            return rowsAffected > 0; // Return true if the insertion was successful
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
 
+
     // Update an existing label
     public boolean updateLabel(String oldLabelName, String newLabelName) {
-        String query = "UPDATE Label SET LabelName = ? WHERE LabelName = ?";
+        String query = "UPDATE Label SET LabelName = ?, EditedAt = ? WHERE LabelName = ?";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, newLabelName);
-            preparedStatement.setString(2, oldLabelName);
+
+            preparedStatement.setTimestamp(2, new java.sql.Timestamp(System.currentTimeMillis()));
+
+            preparedStatement.setString(3, oldLabelName);
+
             int rowsAffected = preparedStatement.executeUpdate();
             preparedStatement.close();
-            return rowsAffected > 0;
+            return rowsAffected > 0; // Return true if the update was successful
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
+
 
     // Delete a label
     public boolean deleteLabel(String labelName) {

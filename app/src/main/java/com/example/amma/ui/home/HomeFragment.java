@@ -38,7 +38,7 @@ public class HomeFragment extends Fragment {
         User currentUser = UserManager.getInstance().getCurrentUser();
 
         if (currentUser != null) {
-            textView.setText("Welcome " + currentUser.getUserName());
+            textView.setText("Welcome " + currentUser.getRole() + ", "+ currentUser.getUserName());
         } else {
             textView.setText("No user logged in");
         }
