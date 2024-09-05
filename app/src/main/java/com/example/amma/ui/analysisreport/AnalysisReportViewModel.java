@@ -25,4 +25,27 @@ public class AnalysisReportViewModel extends ViewModel {
         return mText;
     }
 
+    public List<String> getLabels() {
+        List<String> labels = new ArrayList<>();
+        try {
+            // Assume you have a method to get a database connection
+            ConSQL conn = new ConSQL();
+            Connection connection = conn.SQLConnection();
+            if(connection != null) {
+                String query = "SELECT LabelName FROM [Label]"; // Replace with your actual query
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery(query);
+
+                while (resultSet.next()) {
+                    labels.add(resultSet.getString("LabelName"));
+                }
+                resultSet.close();
+                statement.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return labels;
+    }
+
 }

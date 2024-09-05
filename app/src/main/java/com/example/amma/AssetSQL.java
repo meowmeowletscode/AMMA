@@ -70,9 +70,11 @@ public class AssetSQL {
 
             int index = 1;
             if (!fromDate.isEmpty()) {
+                // Ensure the format is yyyy-MM-dd
                 preparedStatement.setDate(index++, java.sql.Date.valueOf(fromDate));
             }
             if (!toDate.isEmpty()) {
+                // Ensure the format is yyyy-MM-dd
                 preparedStatement.setDate(index++, java.sql.Date.valueOf(toDate));
             }
             if (!label.equals("All")) {
