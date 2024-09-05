@@ -30,8 +30,7 @@ public class ExcelExportUtil {
         Row headerRow = sheet.createRow(0);
         String[] headers = {"AssetID", "AssetName", "Barcode", "Quantity", "Description", "LabelName", "Photo", "EditedAt", "CreatedAt"};
         for (int i = 0; i < headers.length; i++) {
-            Cell cell = headerRow.createCell(i);
-            cell.setCellValue(headers[i]);
+            headerRow.createCell(i).setCellValue(headers[i]);
         }
 
         // Add asset data
@@ -39,7 +38,7 @@ public class ExcelExportUtil {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         for (Asset asset : assets) {
             Row row = sheet.createRow(rowNum++);
-            row.createCell(0).setCellValue(asset.getAssetID());
+            row.createCell(0).setCellValue(asset.getAssetID()); // Ensure AssetID is set correctly
             row.createCell(1).setCellValue(asset.getAssetName() != null ? asset.getAssetName() : ""); // Handle null values
             row.createCell(2).setCellValue(asset.getBarcode() != null ? asset.getBarcode() : ""); // Handle null values
             row.createCell(3).setCellValue(asset.getQuantity());
