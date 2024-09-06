@@ -1,28 +1,25 @@
 package com.example.amma;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.sql.ResultSet;
-import java.sql.Statement;
-
-
 public class LoginActivity extends AppCompatActivity {
 
-    java.sql.Connection connection;
     EditText txtUserName;
     EditText txtPassword;
     Button btnClear;
     Button btnLogin;
-
+    TextView textViewForgotPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,10 +31,11 @@ public class LoginActivity extends AppCompatActivity {
 
         btnClear = findViewById(R.id.btnClear);
         btnLogin = findViewById(R.id.btnLogin);
+        textViewForgotPassword = findViewById(R.id.textViewForgotPassword);
 
         btnClear.setOnClickListener(new BtnClearClickListener());
         btnLogin.setOnClickListener(new BtnLoginClickListener());
-
+        textViewForgotPassword.setOnClickListener(new ForgotPasswordClickListener());
     }
 
     private class BtnClearClickListener implements View.OnClickListener {
@@ -52,6 +50,13 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             LogIn();
+        }
+    }
+
+    private class ForgotPasswordClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            showForgotPasswordDialog();
         }
     }
 
@@ -87,5 +92,16 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-
+    private void showForgotPasswordDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Forgot Password")
+                .setMessage("Please contact support from your organization to reset your password.")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+    }
 }

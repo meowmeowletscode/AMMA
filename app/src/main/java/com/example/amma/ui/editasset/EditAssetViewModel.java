@@ -18,7 +18,7 @@ public class EditAssetViewModel extends ViewModel {
 
     public EditAssetViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("Edit Asset Record");
+        mText.setValue("Edit & Search Asset Record");
     }
 
     public LiveData<String> getText() {

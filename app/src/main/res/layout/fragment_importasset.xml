@@ -79,7 +79,7 @@
         android:layout_width="338dp"
         android:layout_height="89dp"
         android:text="A1: AssetName, B1: Barcode, C1: Quantity, D1: Description, E1: LabelName"
-        android:textColor="@color/purple_500"
+        android:textColor="@color/blue"
         android:textSize="22dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
