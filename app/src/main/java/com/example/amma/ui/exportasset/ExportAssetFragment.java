@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +22,8 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.amma.Asset;
 import com.example.amma.AssetSQL;
 import com.example.amma.R;
-import com.example.amma.databinding.FragmentImportassetBinding;
+import com.example.amma.User;
+import com.example.amma.UserManager;
 import com.example.amma.util.ExcelExportUtil;
 
 import java.util.List;
@@ -42,6 +45,21 @@ public class ExportAssetFragment extends Fragment {
 
         binding = FragmentExportassetBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        // Check the current user's role
+        User currentUser = UserManager.getInstance().getCurrentUser();
+
+        // Check if no user is logged in or if the user is not an Admin
+        if (currentUser == null || !"Admin".equals(currentUser.getRole())) {
+            // Display a toast message and navigate back after a short delay to avoid FragmentManager issues
+            Toast.makeText(getContext(), "Access denied. Only Admins can view this page.", Toast.LENGTH_SHORT).show();
+
+            // Use Handler to safely navigate back to the previous fragment
+            new Handler(Looper.getMainLooper()).postDelayed(() -> requireActivity().onBackPressed(), 100);
+
+            // Return early to prevent the rest of the fragment from being set up
+            return null;
+        }
 
         final TextView textView = binding.txtTitle;
         exportAssetViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
