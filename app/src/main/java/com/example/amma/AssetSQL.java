@@ -159,6 +159,7 @@ public class AssetSQL {
         }
     }
 
+    //Check if a barcode exists for add Asset
     public boolean isBarcodeExists(String barcode) {
         String query = "SELECT COUNT(*) FROM Asset WHERE Barcode = ?";
         try {
@@ -179,6 +180,21 @@ public class AssetSQL {
             e.printStackTrace();
         }
         return false; // Barcode does not exist
+    }
+
+    // Check if a barcode exists for import Asset
+    public boolean isImportBarcodeExists(String barcode) {
+        String query = "SELECT 1 FROM Asset WHERE Barcode = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, barcode);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            boolean exists = resultSet.next();
+            resultSet.close();
+            return exists;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public Map<String, Object> searchAsset(String barcode) {

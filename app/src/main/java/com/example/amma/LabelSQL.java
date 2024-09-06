@@ -17,6 +17,21 @@ public class LabelSQL {
         connection = conn.SQLConnection();
     }
 
+    // Check if a label exists for import Asset
+    public boolean isLabelExists(String labelName) {
+        String query = "SELECT 1 FROM Label WHERE LabelName = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, labelName);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            boolean exists = resultSet.next();
+            resultSet.close();
+            return exists;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public List<Label> getLabels() {
         List<Label> labels = new ArrayList<>();
         String query = "SELECT LabelName FROM Label";
@@ -53,7 +68,6 @@ public class LabelSQL {
         }
     }
 
-
     // Update an existing label
     public boolean updateLabel(String oldLabelName, String newLabelName) {
         String query = "UPDATE Label SET LabelName = ?, EditedAt = ? WHERE LabelName = ?";
@@ -73,7 +87,6 @@ public class LabelSQL {
             return false;
         }
     }
-
 
     // Delete a label
     public boolean deleteLabel(String labelName) {
