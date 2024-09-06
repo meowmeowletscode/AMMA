@@ -28,7 +28,7 @@ public class ExcelExportUtil {
 
         // Create header row
         Row headerRow = sheet.createRow(0);
-        String[] headers = {"AssetID", "AssetName", "Barcode", "Quantity", "Description", "LabelName", "Photo", "EditedAt", "CreatedAt"};
+        String[] headers = {"AssetName", "Barcode", "Quantity", "Description", "LabelName"};
         for (int i = 0; i < headers.length; i++) {
             headerRow.createCell(i).setCellValue(headers[i]);
         }
@@ -38,15 +38,11 @@ public class ExcelExportUtil {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         for (Asset asset : assets) {
             Row row = sheet.createRow(rowNum++);
-            row.createCell(0).setCellValue(asset.getAssetID()); // Ensure AssetID is set correctly
-            row.createCell(1).setCellValue(asset.getAssetName() != null ? asset.getAssetName() : ""); // Handle null values
-            row.createCell(2).setCellValue(asset.getBarcode() != null ? asset.getBarcode() : ""); // Handle null values
-            row.createCell(3).setCellValue(asset.getQuantity());
-            row.createCell(4).setCellValue(asset.getDescription() != null ? asset.getDescription() : ""); // Handle null values
-            row.createCell(5).setCellValue(asset.getLabel() != null ? asset.getLabel() : ""); // Handle null values
-            row.createCell(6).setCellValue(asset.getPhoto() != null ? "Photo Data" : ""); // Placeholder for binary data
-            row.createCell(7).setCellValue(asset.getEditedAt() != null ? sdf.format(asset.getEditedAt()) : ""); // Handle null values
-            row.createCell(8).setCellValue(asset.getCreatedAt() != null ? sdf.format(asset.getCreatedAt()) : ""); // Handle null values
+            row.createCell(0).setCellValue(asset.getAssetName() != null ? asset.getAssetName() : ""); // Handle null values
+            row.createCell(1).setCellValue(asset.getBarcode() != null ? asset.getBarcode() : ""); // Handle null values
+            row.createCell(2).setCellValue(asset.getQuantity());
+            row.createCell(3).setCellValue(asset.getDescription() != null ? asset.getDescription() : ""); // Handle null values
+            row.createCell(4).setCellValue(asset.getLabel() != null ? asset.getLabel() : ""); // Handle null values
         }
 
         // Write to file
