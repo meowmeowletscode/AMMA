@@ -19,6 +19,16 @@ public class UserSQL {
         connection = conn.SQLConnection();
     }
 
+    // Constructor to use in tests
+    public UserSQL(Connection connection) {
+        this.connection = connection;
+    }
+
+    // Accessor for the connection, useful for testing
+    protected Connection getConnection() {
+        return connection;
+    }
+
     //List for User Account Control
     public List<User> getUsers() {
         List<User> users = new ArrayList<>();

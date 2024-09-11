@@ -27,7 +27,7 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="UserAdapterUiTest">
+      <SelectionState runConfigName="Tests in 'com.example.amma'">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
