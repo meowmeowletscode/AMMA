@@ -17,6 +17,16 @@ public class LabelSQL {
         connection = conn.SQLConnection();
     }
 
+    // Constructor to use in tests
+    public LabelSQL(Connection connection) {
+        this.connection = connection;
+    }
+
+    // Accessor for the connection, useful for testing
+    protected Connection getConnection() {
+        return connection;
+    }
+
     // Check if a label exists for import Asset
     public boolean isLabelExists(String labelName) {
         String query = "SELECT 1 FROM Label WHERE LabelName = ?";

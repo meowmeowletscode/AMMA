@@ -1,13 +1,11 @@
-package com.example.amma.ui.analysisreport;
+package com.example.amma;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.content.Context;
-import androidx.test.core.app.ApplicationProvider;
 
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.ActivityTestRule;
 
@@ -25,11 +23,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import com.example.amma.Asset;
-import com.example.amma.AssetAdapter;
-import com.example.amma.MainActivity;
-import com.example.amma.R;
 
 @RunWith(AndroidJUnit4.class)
 public class AssetAdapterTest {
