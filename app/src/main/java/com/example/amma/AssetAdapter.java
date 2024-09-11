@@ -8,9 +8,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Locale;
 
 public class AssetAdapter extends RecyclerView.Adapter<AssetAdapter.ViewHolder> {
     private List<Asset> assetList;
@@ -43,11 +41,11 @@ public class AssetAdapter extends RecyclerView.Adapter<AssetAdapter.ViewHolder> 
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView textAssetName;
-        TextView textBarcode;
-        TextView textQuantity;
-        TextView textDescription;
-        TextView textLabel;
+        public TextView textAssetName;
+        public TextView textBarcode;
+        public TextView textQuantity;
+        public TextView textDescription;
+        public TextView textLabel;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
