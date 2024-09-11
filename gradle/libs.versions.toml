@@ -26,6 +26,7 @@ playServicesMlkitBarcodeScanning = "18.3.1"
 poi = "5.2.3"
 junitJunit = "4.12"
 espressoContrib = "3.6.1"
+robolectric = "4.9"
 
 [libraries]
 annotation = { module = "androidx.annotation:annotation", version.ref = "annotationJvm" }
@@ -56,6 +57,7 @@ poi = { module = "org.apache.poi:poi", version.ref = "poi" }
 poi-ooxml = { module = "org.apache.poi:poi-ooxml", version.ref = "poi" }
 junit-junit = { group = "junit", name = "junit", version.ref = "junitJunit" }
 espresso-contrib = { group = "androidx.test.espresso", name = "espresso-contrib", version.ref = "espressoContrib" }
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

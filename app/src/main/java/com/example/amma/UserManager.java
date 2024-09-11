@@ -13,6 +13,11 @@ public class UserManager {
         return instance;
     }
 
+    // For testing purpose
+    public static synchronized void resetInstance() {
+        instance = null;
+    }
+
     public User getCurrentUser() {
         return currentUser;
     }
