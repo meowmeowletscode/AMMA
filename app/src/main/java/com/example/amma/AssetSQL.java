@@ -24,9 +24,19 @@ public class AssetSQL {
     private ConSQL conn;
     private Connection connection;
 
+    // Constructor to use in tests
+    public AssetSQL(Connection connection) {
+        this.connection = connection;
+    }
+
     public AssetSQL() {
         conn = new ConSQL();
         connection = conn.SQLConnection();
+    }
+
+    // Accessor for the connection, useful for testing
+    protected Connection getConnection() {
+        return connection;
     }
 
     public List<Asset> getAllAssets() {
