@@ -8,10 +8,12 @@
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_menu_home"
             android:title="@string/menu_home" />
+
         <item
             android:id="@+id/nav_addAsset"
             android:icon="@drawable/ic_menu_addasset"
             android:title="@string/menu_addAsset" />
+
         <item
             android:id="@+id/nav_editAsset"
             android:icon="@drawable/ic_menu_editasset"
@@ -41,7 +43,5 @@
             android:id="@+id/nav_exportAsset"
             android:icon="@drawable/ic_menu_exportasset"
             android:title="@string/menu_exportAsset" />
-
-
     </group>
 </menu>

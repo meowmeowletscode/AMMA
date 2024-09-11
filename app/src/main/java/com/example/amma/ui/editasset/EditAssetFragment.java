@@ -274,7 +274,6 @@ public class EditAssetFragment extends Fragment {
         }
     }
 
-
     private void showImageSourceDialogForPhoto() {
         String[] options = {"Camera", "Gallery", "File"};
         new android.app.AlertDialog.Builder(requireContext())

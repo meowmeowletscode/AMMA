@@ -200,8 +200,6 @@ public class CustomizeLabelFragment extends Fragment {
         builder.show();
     }
 
-
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();

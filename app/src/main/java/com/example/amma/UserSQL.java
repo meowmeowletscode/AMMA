@@ -58,8 +58,6 @@ public class UserSQL {
         }
     }
 
-
-
     public boolean editUserPassword(String username, String oldPassword, String newPassword) {
         // Update password only after verifying the old password
         String verifyQuery = "SELECT * FROM [User] WHERE UserName = ? AND Password = ?";

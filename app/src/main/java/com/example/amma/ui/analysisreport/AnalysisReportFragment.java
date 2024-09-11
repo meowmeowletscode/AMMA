@@ -156,7 +156,6 @@ public class AnalysisReportFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
-
     private void showDatePickerDialog(boolean isStartDate) {
         calendar = Calendar.getInstance();
         year = calendar.get(Calendar.YEAR);
@@ -174,7 +173,6 @@ public class AnalysisReportFragment extends Fragment {
 
         datePickerDialog.show();
     }
-
 
     @Override
     public void onDestroyView() {

@@ -227,7 +227,6 @@ public class AddAssetFragment extends Fragment {
         }
     }
 
-
     private void scanBarcode(InputImage image) {
         BarcodeScannerOptions options = new BarcodeScannerOptions.Builder()
                 .setBarcodeFormats(Barcode.FORMAT_ALL_FORMATS)
@@ -249,7 +248,6 @@ public class AddAssetFragment extends Fragment {
                     Toast.makeText(getContext(), "Failed to scan barcode", Toast.LENGTH_SHORT).show();
                 });
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
