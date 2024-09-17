@@ -8,8 +8,12 @@ import org.mockito.MockitoAnnotations;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -61,48 +65,70 @@ public class AssetSQLTest {
     }
 
     @Test
-    public void testGetFilteredAssets() throws Exception {
-        // Set up mock behavior for ResultSet
-        when(mockResultSet.next()).thenReturn(true).thenReturn(false);
-        when(mockResultSet.getString("AssetName")).thenReturn("FilteredAsset");
-        when(mockResultSet.getString("Barcode")).thenReturn("654321");
-        when(mockResultSet.getInt("Quantity")).thenReturn(5);
-        when(mockResultSet.getString("Description")).thenReturn("FilteredDescription");
-        when(mockResultSet.getString("LabelName")).thenReturn("FilteredLabel");
+    public void testGetAssetsByDateRange() throws SQLException, ParseException {
+        // Prepare test data
+        String startDateStr = "01/01/2024";
+        String endDateStr = "31/12/2024";
 
-        // Set up mock behavior for PreparedStatement
+        Date startDate = new SimpleDateFormat("dd/MM/yyyy").parse(startDateStr);
+        Date endDate = new SimpleDateFormat("dd/MM/yyyy").parse(endDateStr);
+
+        String startDateFormatted = new SimpleDateFormat("yyyy-MM-dd").format(startDate);
+        String endDateFormatted = new SimpleDateFormat("yyyy-MM-dd").format(endDate);
+
+        // Mock ResultSet behavior
         when(mockPreparedStatement.executeQuery()).thenReturn(mockResultSet);
+        when(mockResultSet.next()).thenReturn(true).thenReturn(false); // Only one result
+        when(mockResultSet.getString("AssetName")).thenReturn("Test Asset");
+        when(mockResultSet.getString("Barcode")).thenReturn("123456789");
+        when(mockResultSet.getInt("Quantity")).thenReturn(10);
+        when(mockResultSet.getString("Description")).thenReturn("Test Description");
+        when(mockResultSet.getString("LabelName")).thenReturn("Test Label");
 
-        // Create a mock connection and set it up in AssetSQL
-        Connection mockConnection = mock(Connection.class);
-        when(mockConnection.prepareStatement(any(String.class))).thenReturn(mockPreparedStatement);
-        assetSQL = new AssetSQL() {
-            @Override
-            protected Connection getConnection() {
-                return mockConnection;
-            }
-        };
+        // Execute the method under test
+        List<Asset> assets = assetSQL.getAssetsByDateRange(startDateStr, endDateStr);
 
-        // Call the method under test
-        List<Asset> assets = assetSQL.getFilteredAssets("2023-01-01", "2023-12-31", "FilteredLabel");
+        // Verify interactions
+        verify(mockPreparedStatement).setString(1, startDateFormatted);
+        verify(mockPreparedStatement).setString(2, endDateFormatted);
+        verify(mockPreparedStatement).executeQuery();
 
-        // Verify the result
+        // Verify results
         assertNotNull(assets);
         assertEquals(1, assets.size());
-        assertEquals("FilteredAsset", assets.get(0).getAssetName());
-        assertEquals("654321", assets.get(0).getBarcode());
-        assertEquals(5, assets.get(0).getQuantity());
-        assertEquals("FilteredDescription", assets.get(0).getDescription());
-        assertEquals("FilteredLabel", assets.get(0).getLabel());
 
-        // Verify interactions with mocks
-        verify(mockPreparedStatement).setTimestamp(1, Timestamp.valueOf("2023-01-01 00:00:00.000"));
-        verify(mockPreparedStatement).setTimestamp(2, Timestamp.valueOf("2023-12-31 23:59:59.999"));
-        verify(mockPreparedStatement).setString(3, "FilteredLabel");
-        verify(mockPreparedStatement).executeQuery();
+        Asset asset = assets.get(0);
+        assertEquals("Test Asset", asset.getAssetName());
+        assertEquals("123456789", asset.getBarcode());
+        assertEquals(10, asset.getQuantity());
+        assertEquals("Test Description", asset.getDescription());
+        assertEquals("Test Label", asset.getLabel());
     }
 
+    @Test
+    public void testGetAssetsByLabel() throws Exception {
+        // Prepare mock ResultSet with sample data
+        when(mockResultSet.next()).thenReturn(true).thenReturn(false); // One row of data
+        when(mockResultSet.getString("AssetName")).thenReturn("Asset1");
+        when(mockResultSet.getString("Barcode")).thenReturn("123456789");
+        when(mockResultSet.getInt("Quantity")).thenReturn(10);
+        when(mockResultSet.getString("Description")).thenReturn("Test Asset");
+        when(mockResultSet.getString("LabelName")).thenReturn("TestLabel");
 
+        // Call the method
+        List<Asset> assets = assetSQL.getAssetsByLabel("TestLabel");
+
+        // Expected asset
+        Asset expectedAsset = new Asset("Asset1", "123456789", 10, "Test Asset", "TestLabel");
+
+        // Verify the results
+        assertEquals(1, assets.size());
+        assertEquals(expectedAsset, assets.get(0));
+
+        // Verify interactions
+        verify(mockPreparedStatement).setString(1, "TestLabel");
+        verify(mockPreparedStatement).executeQuery();
+    }
     @Test
     public void testSaveAsset() throws Exception {
         // Assuming `photo` is null for this test
