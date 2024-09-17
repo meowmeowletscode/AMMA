@@ -13,10 +13,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class AssetSQL {
@@ -34,6 +38,9 @@ public class AssetSQL {
         connection = conn.SQLConnection();
     }
 
+    private static final String DATE_INPUT_FORMAT = "MM/dd/yyyy";
+    private static final String SQL_DATE_FORMAT = "yyyy-MM-dd";
+
     // Accessor for the connection, useful for testing
     protected Connection getConnection() {
         return connection;
@@ -41,7 +48,7 @@ public class AssetSQL {
 
     public List<Asset> getAllAssets() {
         List<Asset> assets = new ArrayList<>();
-        String query = "SELECT * FROM Asset";
+        String query = "SELECT * FROM Asset1";
         try {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
@@ -63,74 +70,141 @@ public class AssetSQL {
         return assets;
     }
 
-    public List<Asset> getFilteredAssets(String fromDate, String toDate, String label) {
+    public List<Asset> getAssetsByDateRange(String startDateStr, String endDateStr) {
         List<Asset> assets = new ArrayList<>();
-        StringBuilder queryBuilder = new StringBuilder("SELECT * FROM Asset WHERE 1=1");
-
-        // Add date range filter
-        if (!fromDate.isEmpty()) {
-            queryBuilder.append(" AND CreatedAt >= ?");
-        }
-        if (!toDate.isEmpty()) {
-            queryBuilder.append(" AND CreatedAt <= ?");
-        }
-        if (!label.equals("All")) {
-            queryBuilder.append(" AND LabelName = ?");
-        }
 
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(queryBuilder.toString());
+            // Parse the input date strings
+            SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy");
+            Date startDate = inputFormat.parse(startDateStr);
+            Date endDate = inputFormat.parse(endDateStr);
 
-            int index = 1;
-            if (!fromDate.isEmpty()) {
-                // Ensure the fromDate is in the correct format: yyyy-MM-dd, then append time
-                String formattedFromDate = fromDate + " 00:00:00.000"; // Ensure it covers the full start of the day
-                Log.d("SQL Debug", "Formatted From Date: " + formattedFromDate);
-                preparedStatement.setTimestamp(index++, java.sql.Timestamp.valueOf(formattedFromDate));
-            }
+            // Format dates for SQL
+            SimpleDateFormat sqlFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String startDateFormatted = sqlFormat.format(startDate);
+            Log.d("SQL Debug", "Formatted From Date: " + startDateFormatted);
+            String endDateFormatted = sqlFormat.format(endDate);
+            Log.d("SQL Debug", "Formatted To Date: " + endDateFormatted);
 
-            if (!toDate.isEmpty()) {
-                // Ensure the toDate is in the correct format: yyyy-MM-dd, then append time
-                String formattedToDate = toDate + " 23:59:59.999"; // Ensure it covers the full end of the day
-                Log.d("SQL Debug", "Formatted To Date: " + formattedToDate);
-                preparedStatement.setTimestamp(index++, java.sql.Timestamp.valueOf(formattedToDate));
-            }
+            // Construct the SQL query
+            String query = "SELECT * FROM Asset1 WHERE CreatedAt BETWEEN ? AND ?";
 
-            if (!label.equals("All")) {
-                Log.d("SQL Debug", "Label Filter: " + label);
-                preparedStatement.setString(index++, label);
-            }
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setString(1, startDateFormatted);
+                stmt.setString(2, endDateFormatted);
 
-            // Log the final query command with parameters
-            Log.d("SQL Debug", "Executing Query: " + queryBuilder.toString());
+                ResultSet rs = stmt.executeQuery();
 
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (!resultSet.next()) {
-                Log.e("Query Execution", "No results found.");
-            } else {
-                // Process the first row that was checked
-                do {
+                while (rs.next()) {
+                    // Retrieve asset data and add to list
                     Asset asset = new Asset(
-                            resultSet.getString("AssetName"),
-                            resultSet.getString("Barcode"),
-                            resultSet.getInt("Quantity"),
-                            resultSet.getString("Description"),
-                            resultSet.getString("LabelName")
+                            rs.getString("AssetName"),
+                            rs.getString("Barcode"),
+                            rs.getInt("Quantity"),
+                            rs.getString("Description"),
+                            rs.getString("LabelName")
                     );
                     assets.add(asset);
-                } while (resultSet.next());  // Continue processing remaining rows
+                }
             }
-            resultSet.close();
-            preparedStatement.close();
+        } catch (ParseException e) {
+            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return assets;
     }
 
+    // Use for datetime format CreatedAT: fail
+//    public List<Asset> getAssetsByDateRange(String startDateStr, String endDateStr) {
+//        List<Asset> assets = new ArrayList<>();
+//        try {
+//            // Define the input date format (dd/MM/yyyy)
+//            SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+//
+//            // Parse the input date strings
+//            Date startDate = inputFormat.parse(startDateStr);
+//            Date endDate = inputFormat.parse(endDateStr);
+//
+//            // Convert Dates to SQL Timestamps
+//            Timestamp startTimestamp = new Timestamp(startDate.getTime());
+//            Timestamp endTimestamp = new Timestamp(endDate.getTime());
+//
+//            // Adjust end timestamp to include the entire end day
+//            Calendar calendar = Calendar.getInstance();
+//            calendar.setTime(endDate);
+//            calendar.set(Calendar.HOUR_OF_DAY, 23);
+//            calendar.set(Calendar.MINUTE, 59);
+//            calendar.set(Calendar.SECOND, 59);
+//            Timestamp endOfDayTimestamp = new Timestamp(calendar.getTimeInMillis());
+//
+//            // Ensure that formatted dates are correct
+//            Log.d("SQL Debug", "Formatted From Date: " + startTimestamp.toString());
+//            Log.d("SQL Debug", "Formatted To Date: " + endOfDayTimestamp.toString());
+//
+//            // Construct the SQL query
+//            String query = "SELECT * FROM Asset1 WHERE CreatedAt BETWEEN ? AND ?";
+//
+//            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+//                stmt.setTimestamp(1, startTimestamp);
+//                stmt.setTimestamp(2, endOfDayTimestamp);
+//
+//                ResultSet rs = stmt.executeQuery();
+//
+//                while (rs.next()) {
+//                    // Retrieve asset data and add to list
+//                    Asset asset = new Asset(
+//                            rs.getString("AssetName"),
+//                            rs.getString("Barcode"),
+//                            rs.getInt("Quantity"),
+//                            rs.getString("Description"),
+//                            rs.getString("LabelName")
+//                    );
+//                    assets.add(asset);
+//                }
+//            }
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return assets;
+//    }
+
+    public List<Asset> getAssetsByLabel(String label) {
+        List<Asset> assets = new ArrayList<>();
+
+        try {
+            // Construct the SQL query with label filter
+            String query = "SELECT * FROM Asset1 WHERE LabelName = ?";
+
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setString(1, label); // Set the label parameter
+
+                ResultSet rs = stmt.executeQuery();
+
+                while (rs.next()) {
+                    // Retrieve asset data and add to list
+                    Asset asset = new Asset(
+                            rs.getString("AssetName"),
+                            rs.getString("Barcode"),
+                            rs.getInt("Quantity"),
+                            rs.getString("Description"),
+                            rs.getString("LabelName")
+                    );
+                    assets.add(asset);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return assets;
+    }
+
+
     public boolean saveAsset(String assetName, String barcode, int quantity, String description, String label, Bitmap photo) {
         try {
-            String insertQuery = "INSERT INTO Asset (AssetName, Barcode, Quantity, Description, LabelName, Photo, CreatedAt) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String insertQuery = "INSERT INTO Asset1 (AssetName, Barcode, Quantity, Description, LabelName, Photo, CreatedAt) VALUES (?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(insertQuery);
             preparedStatement.setString(1, assetName);
             preparedStatement.setString(2, barcode);
@@ -157,8 +231,11 @@ public class AssetSQL {
             }
 
             // Set CreatedAt to current date and time
-            Timestamp createdAt = new Timestamp(new Date().getTime());
-            preparedStatement.setTimestamp(7, createdAt);
+//            Timestamp createdAt = new Timestamp(new Date().getTime());
+//            preparedStatement.setTimestamp(7, createdAt);
+
+            java.sql.Date createdAt = new java.sql.Date(new java.util.Date().getTime());
+            preparedStatement.setDate(7, createdAt);
 
             preparedStatement.executeUpdate();
             preparedStatement.close();
@@ -171,7 +248,7 @@ public class AssetSQL {
 
     //Check if a barcode exists for add Asset
     public boolean isBarcodeExists(String barcode) {
-        String query = "SELECT COUNT(*) FROM Asset WHERE Barcode = ?";
+        String query = "SELECT COUNT(*) FROM Asset1 WHERE Barcode = ?";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, barcode);
@@ -194,7 +271,7 @@ public class AssetSQL {
 
     // Check if a barcode exists for import Asset
     public boolean isImportBarcodeExists(String barcode) {
-        String query = "SELECT 1 FROM Asset WHERE Barcode = ?";
+        String query = "SELECT 1 FROM Asset1 WHERE Barcode = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, barcode);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -212,7 +289,7 @@ public class AssetSQL {
 
         try {
             // SQL query to search for the asset by barcode
-            String selectQuery = "SELECT AssetName, Barcode, Quantity, Description, LabelName, Photo FROM Asset WHERE Barcode = ?";
+            String selectQuery = "SELECT AssetName, Barcode, Quantity, Description, LabelName, Photo FROM Asset1 WHERE Barcode = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(selectQuery);
             preparedStatement.setString(1, barcode);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -252,7 +329,7 @@ public class AssetSQL {
 
     public boolean editAsset(String assetName, String barcode, int quantity, String description, String label, Bitmap photo) {
         try {
-            String updateQuery = "UPDATE Asset SET AssetName = ?, Quantity = ?, Description = ?, LabelName = ?, Photo = ?, EditedAt = ? WHERE Barcode = ?";
+            String updateQuery = "UPDATE Asset1 SET AssetName = ?, Quantity = ?, Description = ?, LabelName = ?, Photo = ?, EditedAt = ? WHERE Barcode = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(updateQuery);
             preparedStatement.setString(1, assetName);
             preparedStatement.setInt(2, quantity);
@@ -295,7 +372,7 @@ public class AssetSQL {
 
     public boolean deleteAsset(String barcode) {
         try {
-            String deleteQuery = "DELETE FROM Asset WHERE Barcode = ?";
+            String deleteQuery = "DELETE FROM Asset1 WHERE Barcode = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery);
             preparedStatement.setString(1, barcode);
 

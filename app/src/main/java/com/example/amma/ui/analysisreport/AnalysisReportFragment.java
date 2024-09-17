@@ -46,7 +46,7 @@ public class AnalysisReportFragment extends Fragment {
     private List<Asset> assetList;
     private EditText editTextFromDate, editTextToDate;
     private Spinner spinnerLabelFilter;
-    private Button buttonApplyFilters, buttonSelectFromDate, buttonSelectToDate;
+    private Button btnSearchDate, btnSearchLabel, buttonSelectFromDate, buttonSelectToDate;
     private AssetSQL assetSQL;
 
     private Calendar calendar;
@@ -80,7 +80,8 @@ public class AnalysisReportFragment extends Fragment {
         editTextFromDate = root.findViewById(R.id.editTextFromDate);
         editTextToDate = root.findViewById(R.id.editTextToDate);
         spinnerLabelFilter = root.findViewById(R.id.spinnerLabelFilter);
-        buttonApplyFilters = root.findViewById(R.id.buttonApplyFilters);
+        btnSearchDate = root.findViewById(R.id.btnSearchDate);
+        btnSearchLabel = root.findViewById(R.id.btnSearchLabel);
         buttonSelectFromDate = root.findViewById(R.id.buttonSelectFromDate);
         buttonSelectToDate = root.findViewById(R.id.buttonSelectToDate);
 
@@ -97,7 +98,9 @@ public class AnalysisReportFragment extends Fragment {
         loadLabels();
 
         // Set up filter button click listener
-        buttonApplyFilters.setOnClickListener(v -> applyFilters());
+        btnSearchDate.setOnClickListener(v -> applyDateFilters());
+
+        btnSearchLabel.setOnClickListener(v -> applyLabelFilters());
 
         // Set up date pickers
         buttonSelectFromDate.setOnClickListener(v -> showDatePickerDialog(true));
@@ -120,39 +123,39 @@ public class AnalysisReportFragment extends Fragment {
         spinnerLabelFilter.setAdapter(adapter);
     }
 
-    private void applyFilters() {
-        String fromDateStr = editTextFromDate.getText().toString().trim();
-        String toDateStr = editTextToDate.getText().toString().trim();
-        String selectedLabel = spinnerLabelFilter.getSelectedItem().toString();
+    private void applyDateFilters() {
+        String startDate = editTextFromDate.getText().toString();
+        String endDate = editTextToDate.getText().toString();
 
-        if (fromDateStr.isEmpty() || toDateStr.isEmpty()) {
-            Toast.makeText(getContext(), "Please enter both start and end dates.", Toast.LENGTH_SHORT).show();
+        if (startDate.isEmpty() || endDate.isEmpty()) {
+            Toast.makeText(getContext(), "Please select both start and end dates.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        SimpleDateFormat inputFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
-        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        String fromDate = "";
-        String toDate = "";
+        // Fetch filtered assets from the database
+        List<Asset> filteredAssets = assetSQL.getAssetsByDateRange(startDate, endDate);
 
-        try {
-            // Convert fromDateStr to yyyy-MM-dd
-            Date date = inputFormat.parse(fromDateStr);
-            fromDate = outputFormat.format(date);
-
-            // Convert toDateStr to yyyy-MM-dd
-            date = inputFormat.parse(toDateStr);
-            toDate = outputFormat.format(date);
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-            Toast.makeText(getContext(), "Date format is incorrect. Please use MM/dd/yyyy.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Apply filters based on user input
+        // Update the RecyclerView with the filtered assets
         assetList.clear();
-        assetList.addAll(assetSQL.getFilteredAssets(fromDate, toDate, selectedLabel));
+        assetList.addAll(filteredAssets);
+        adapter.notifyDataSetChanged();
+    }
+
+    private void applyLabelFilters(){
+        // Get the selected label from the spinner
+        String selectedLabel = (String) spinnerLabelFilter.getSelectedItem();
+
+        if (selectedLabel == null || selectedLabel.isEmpty()) {
+            Toast.makeText(getContext(), "Please select a label to filter.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Fetch filtered assets from the database based on the selected label
+        List<Asset> filteredAssets = assetSQL.getAssetsByLabel(selectedLabel);
+
+        // Update the RecyclerView with the filtered assets
+        assetList.clear();
+        assetList.addAll(filteredAssets);
         adapter.notifyDataSetChanged();
     }
 
