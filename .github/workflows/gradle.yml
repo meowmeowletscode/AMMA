@@ -1,0 +1,52 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set Up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17' # or the version you use
+          distribution: 'adopt-openjdk'
+
+      - name: Cache Gradle Wrapper and Dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      - name: Run Unit Tests
+        run: ./gradlew testDebugUnitTest
+
+      - name: Run Android Instrumented Tests
+        run: ./gradlew connectedAndroidTest
+
+      - name: Generate JaCoCo Test Report
+        run: ./gradlew jacocoTestReport
+
+      - name: Upload JaCoCo Report to GitHub Pages
+        if: success()
+        uses: actions/upload-artifact@v3
+        with:
+          name: jacoco-report
+          path: app/build/reports/jacoco/testDebugUnitTestHtml/
